@@ -7,6 +7,12 @@ import java.security.SecureRandom
 
 val zufallsGenerator = SecureRandom()
 
+data class EuklidischerAlgorithmusErgebnis(
+    val ggt: BigInteger,
+    val s: BigInteger,
+    val t: BigInteger,
+)
+
 data class ÖffentlicherSchlüssel(
     val n: BigInteger,
     val e: BigInteger
@@ -36,7 +42,7 @@ class RSA {
         val n = p * q
         val phi = (p - 1) * (q - 1)
         val e = BigInteger("65537")
-        val d = (1 / e) % phi
+        val d = erwEuklAlgorithmus(e, phi).s
         return SchlüsselPaar(
             ÖffentlicherSchlüssel(n, e),
             PrivaterSchlüssel(n, d)
@@ -44,11 +50,40 @@ class RSA {
     }
 
     /** Die Funktion modPow führt die Rechnung klartextZahl hoch e modulo n aus */
-    fun zahlVerschlüsseln(klartextZahl: BigInteger, öffentlicherSchlüssel: ÖffentlicherSchlüssel) : BigInteger{
-        return klartextZahl.modPow(öffentlicherSchlüssel.e, öffentlicherSchlüssel.n)
+    fun zahlVerschlüsseln(
+        klartextZahl: BigInteger,
+        öffentlicherSchlüssel: ÖffentlicherSchlüssel
+    ) : BigInteger{
+        return klartextZahl.modPow(
+            öffentlicherSchlüssel.e,
+            öffentlicherSchlüssel.n
+        )
     }
     /** Die Funktion modPow führt die Rechnung verschlüsselteZahl hoch d modulo n aus */
-    fun zahlEntschlüsseln(verschlüsselteZahl: BigInteger, privaterSchlüssel: PrivaterSchlüssel) : BigInteger{
-        return verschlüsselteZahl.modPow(privaterSchlüssel.d, privaterSchlüssel.n)
+    fun zahlEntschlüsseln(
+        verschlüsselteZahl: BigInteger,
+        privaterSchlüssel: PrivaterSchlüssel
+    ) : BigInteger{
+        return verschlüsselteZahl.modPow(
+            privaterSchlüssel.d,
+            privaterSchlüssel.n
+        )
+    }
+
+    fun erwEuklAlgorithmus(
+        a: BigInteger,
+        b: BigInteger
+    ) : EuklidischerAlgorithmusErgebnis {
+        if(b == NULL) return EuklidischerAlgorithmusErgebnis(a, EINS, NULL)
+
+        // Das %-Zeichen entspricht einer Division mit Rest
+        val rest = a % b
+        val ergebnisDarunter = erwEuklAlgorithmus(b, rest)
+
+        return EuklidischerAlgorithmusErgebnis(
+            ggt = ergebnisDarunter.ggt,
+            s = ergebnisDarunter.t,
+            t = ergebnisDarunter.s - (a / b) * ergebnisDarunter.t
+        )
     }
 }

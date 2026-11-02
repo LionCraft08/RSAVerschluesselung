@@ -17,8 +17,7 @@ fun BigInteger.zahlZuTextKonvertieren(): String {
 
 operator fun BigInteger.minus(int:Int): BigInteger = this.minus(BigInteger.valueOf(int.toLong()))
 operator fun BigInteger.plus(int:Int): BigInteger = this.add(BigInteger.valueOf(int.toLong()))
-operator fun Int.div(bigInt: BigInteger) : ModInvStorage = ModInvStorage(-this, bigInt) //BigDecimal.valueOf(this.toLong()).divide(bigInt.toBigDecimal())
-operator fun BigDecimal.rem(bigInt: BigInteger) : BigInteger = this.remainder(bigInt.toBigDecimal()).toBigInteger()
-operator fun ModInvStorage.rem(bigInt: BigInteger) : BigInteger = this.base.modPow(this.exponent.toBigInteger(), bigInt)
 
-data class ModInvStorage(val exponent: Int, val base: BigInteger)
+val NULL = BigInteger.ZERO
+val EINS = BigInteger.ONE
+val ZWEI = BigInteger.TWO
